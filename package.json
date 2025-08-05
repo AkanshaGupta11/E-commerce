@@ -19,7 +19,9 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",
+    "react-scroll-top": "^1.0.4",
     "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
     "redux": "^5.0.1",
     "slick-carousel": "^1.8.1",
     "tailwindcss": "^4.1.11"

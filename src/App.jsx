@@ -8,6 +8,8 @@ import Contact from "./pages/Contact"
 import Cart from "./pages/Cart"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import Footer from "./components/Footer"
+
 function App() {
   const [location , setLocation] = useState()
   const [openDropDown , setOpenDropDown] = useState(false);
@@ -58,11 +60,14 @@ function App() {
       </div>
       <Routes>
         <Route path = "/" element ={<Home/>}/>
-        <Route path = "/products" element ={<Products/>}/>
+        <Route path = "/product" element ={<Products/>}/>
         <Route path = "/about" element ={<About/>}/>
         <Route path = "/contact" element ={<Contact/>}/>
         <Route path = "/cart" element = {<Cart/>}/>
       </Routes>
+      <div>
+        <Footer></Footer>
+      </div>
     </div>
   )
 }
