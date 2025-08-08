@@ -9,11 +9,16 @@ import Cart from "./pages/Cart"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import Footer from "./components/Footer"
+import SingleProduct from "./pages/SingleProduct"
+import CategoryProduct from "./pages/CategoryProduct"
+import { useCart } from "./context/CartContext"
+import ProtectedRoute from "./components/ProtectedRoute"
+
 
 function App() {
   const [location , setLocation] = useState()
   const [openDropDown , setOpenDropDown] = useState(false);
-
+  const {cartItem, setCartItem} = useCart()
   const getLocation = async () => {
     navigator.geolocation.getCurrentPosition(async pos => {
       const{latitude, longitude} = pos.coords
@@ -35,24 +40,22 @@ function App() {
   }
 
 
-   const[data, setData] = useState();
-    //fetching data 
-    const fetchAllProducts = async() =>{
-        try{
-            const res = await axios.get("https://fakestoreapi.in/api/products?limit=150");
-            console.log(res);
-            const productsData = res.data.products;
-            setData(productsData);
-        }
-        catch(error){
-            console.log(error);1
-        }
-    }
+   useEffect(()=>{
+    getLocation();
+   })
 
-  useEffect(()=>{
-    getLocation()
-    fetchAllProducts()
-  },[])
+//load cart from local storage on innitial render 
+useEffect (() =>{
+  const storedCart = localStorage.getItem('cartItem');
+  if(storedCart){
+    setCartItem(JSON.parse(storedCart));
+  }
+},[]);
+
+//save to local storage 
+useEffect(() =>{
+  localStorage.setItem('cartItem',JSON.stringify(cartItem))
+},[cartItem])
   return (
     <div>
       <div>
@@ -60,10 +63,14 @@ function App() {
       </div>
       <Routes>
         <Route path = "/" element ={<Home/>}/>
-        <Route path = "/product" element ={<Products/>}/>
+        <Route path = "/products" element ={<Products/>}/>
+        <Route path = "/products/:id" element = {<SingleProduct/>}/>
+        <Route path = "/category/:category" element = {<CategoryProduct/>}/>
         <Route path = "/about" element ={<About/>}/>
         <Route path = "/contact" element ={<Contact/>}/>
-        <Route path = "/cart" element = {<Cart/>}/>
+        <Route path = "/cart" element = {<ProtectedRoute>
+          <Cart location = {location} getLocation={getLocation}/>
+        </ProtectedRoute>}/>
       </Routes>
       <div>
         <Footer></Footer>

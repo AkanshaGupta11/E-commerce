@@ -5,6 +5,8 @@ import Loading from "../assets/Loading4.webm"
 import ProductCard from '../components/ProductCard';
 import Pagination from '../components/Pagination';
 import MobileFilter from '../components/MobileFilter';
+import notfound from "../assets/notfound.json"
+import Lottie from "lottie-react"
 function Products() {
   const {data, fetchAllProducts} = getData();
   const [search , setSearch] = useState("");
@@ -31,11 +33,17 @@ function Products() {
     setPage(selectedPage);
     window.scrollTo(0,0)
   }
+
+
   const filterData = data?.filter((item) => 
   item.title.toLowerCase().includes(search.toLowerCase()) &&
     (category === "All" || item.category === category) &&
     (brand === "All" || item.brand === brand) &&
     item.price >= priceRange[0] && item.price <= priceRange[1])
+
+  const dynamicPage = Math.ceil(filterData?.length / 8)
+
+
   useEffect(()=>{
     fetchAllProducts();
     window.scrollTo(0,0);
@@ -51,14 +59,26 @@ function Products() {
               <FilterSection search = {search} setSearch = {setSearch} brand = {brand} setBrand = {setBrand} 
               priceRange = {priceRange} setPriceRange = {setPriceRange} category={category} setCategory={setCategory}
               handleCategoryChange ={handleCategoryChange} handleBrandChange = {handleBrandChange} />
-              <div className='grid grid-cols-4 gap-7 mt-10'>
+              {
+                filterData?.length > 0 ? (
+                  <div className='flex flex-col justify-center items-center'>
+                    <div className='grid grid-cols-2  md:grid-cols-4 gap:2 md:gap-7 mt-10'>
                 {
                   filterData?.slice(page*8-8,page*8).map((product,index) => {
                     return <ProductCard key = {index} product ={product}/>
                   })
                 }
               </div>
-              <Pagination pageHandler = {pageHandler} page = {page}/>
+              <Pagination pageHandler = {pageHandler} page = {page} dynamicPage = {dynamicPage}/>
+                  </div>
+                ) : (
+                  <div className='flex justify-center items-center md:h-[600px] md:w-[900px] mt-10'>
+                    <Lottie animationData = {notfound} classID = 'w-[500px]'/>
+                  </div>
+                )
+              }
+              
+              
             </div>
           ) : (
             <div className='flex items-center justify-center h-[400px]'>
@@ -74,3 +94,9 @@ function Products() {
 }
 
 export default Products
+
+//agr data > 0 yaan data fetch hogya -->
+// agr nhi tho loading krna 
+
+//agr filterdata aa gya tho ek page mai 8 products pagination 
+//nhi tho not found page 
